@@ -6,6 +6,10 @@ import Menu from "src/components/Menu";
 import Footer from "src/components/Footer";
 import { GlobalStyles } from "src/styles/GlobalStyles";
 
+const MainContainer = styled.div`
+	padding: 0 2rem;
+`;
+
 const Main = styled.main`
 	max-width: 1216px;
 	margin: 0 auto;
@@ -53,7 +57,9 @@ const Layout: FC = ({ children }) => (
 		<Header>
 			<Menu />
 		</Header>
-		<Main>{children}</Main>
+		<MainContainer>
+			<Main>{children}</Main>
+		</MainContainer>
 		<Footer />
 		<GlobalStyles />
 	</>
