@@ -7,7 +7,7 @@ import Footer from "src/components/Footer";
 import { GlobalStyles } from "src/styles/GlobalStyles";
 
 const MainContainer = styled.div`
-	padding: 0 2rem;
+	padding: 0 20px;
 `;
 
 const Main = styled.main`
@@ -18,13 +18,8 @@ const Main = styled.main`
 	align-items: center;
 	flex-direction: column;
 	min-height: 90vh;
-	font-size: 1.6rem;
+	font-size: 16px;
 	line-height: 1.3;
-`;
-
-const Header = styled.header`
-	background: #cecece;
-	padding: 1.2rem 0;
 `;
 
 const Layout: FC = ({ children }) => (
@@ -54,9 +49,9 @@ const Layout: FC = ({ children }) => (
 			/>
 			<link rel="manifest" href="/static/favicon/site.webmanifest" />
 		</Head>
-		<Header>
+		<header>
 			<Menu />
-		</Header>
+		</header>
 		<MainContainer>
 			<Main>{children}</Main>
 		</MainContainer>

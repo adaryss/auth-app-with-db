@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 
 const NavigationWrapper = styled.nav`
-	background: #cecece;
+	background: #EDF2F7;
 	width: 100%;
+	padding: 16px 0;
 `;
 
 const Navigation = styled.ul`
@@ -85,3 +86,4 @@ const Menu = () => {
 };
 
 export default Menu;
+
