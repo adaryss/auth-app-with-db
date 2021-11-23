@@ -3,10 +3,12 @@ import styled from "styled-components";
 
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
+import { useAuth } from "src/contexts/AuthContext";
 
 const NavigationWrapper = styled.nav`
-	background: #cecece;
+	background: #edf2f7;
 	width: 100%;
+	padding: 16px 0;
 `;
 
 const Navigation = styled.ul`
@@ -27,19 +29,31 @@ const MenuItem = styled.li`
 	}
 `;
 
+const User = styled.div`
+	margin: 0 8px;
+`;
+
 const Menu = () => {
 	const router = useRouter();
+	const { user, handleLogout: handleLogoutUser } = useAuth();
+
 	const isHome = router.pathname === "/";
 
 	const isAdmin = true;
-	const isLoggedIn = true;
-	const isLoggedOut = true;
+	const isLoggedIn = user != null;
+	const isLoggedOut = user == null;
 
-	const handleLogout = () => {
-		if (!isHome) {
-			router.push("/");
+	const handleLogout = async () => {
+		try {
+			await handleLogoutUser();
+			if (!isHome) {
+				router.push("/");
+			}
+		} catch (error) {
+			console.error(error);
 		}
 	};
+
 	return (
 		<NavigationWrapper>
 			<Navigation>
@@ -49,7 +63,7 @@ const Menu = () => {
 					</Link>
 				</MenuItem>
 				{isLoggedIn && (
-					<MenuItem onClick={handleLogout}>
+					<MenuItem>
 						<Link href="/todos">
 							<a>My todos</a>
 						</Link>
@@ -76,6 +90,10 @@ const Menu = () => {
 						</Link>
 					</MenuItem>
 				)}
+				{isLoggedIn && (
+					<User>{user.email}</User>
+				)}
+
 				{isLoggedIn && (
 					<MenuItem onClick={handleLogout}>Logout</MenuItem>
 				)}
