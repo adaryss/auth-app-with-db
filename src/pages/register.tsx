@@ -45,7 +45,7 @@ const Register = () => {
 				emailRef.current.value,
 				passwordRef.current.value
 			);
-			router.push("/todos");
+			router.push("/");
 		} catch (error) {
 			const authError = error as firebase.auth.Error;
 			setRegisterError(authError.message.split(":")[1]);

@@ -31,6 +31,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: FC = ({ children }) => {
 	const [user, setUser] = useState<User>(null);
+	const [hasUserLoaded, setHasUserLoaded] = useState(false);
 
 	const handleRegister = (email: string, password: string) => {
 		return auth.createUserWithEmailAndPassword(email, password);
@@ -58,6 +59,7 @@ export const AuthProvider: FC = ({ children }) => {
 					destroyCookie(null, "refreshToken");
 				}
 			}
+			setHasUserLoaded(true);
 		});
 
 		return unsubscribe;
@@ -73,7 +75,7 @@ export const AuthProvider: FC = ({ children }) => {
 
 	return (
 		<AuthContext.Provider value={contextValue}>
-			{children}
+			{hasUserLoaded && children}
 		</AuthContext.Provider>
 	);
 };
