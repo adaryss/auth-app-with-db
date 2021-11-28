@@ -8,6 +8,7 @@ import React, {
 import { auth } from "src/utils/auth/firebaseClient";
 import firebase from "firebase/compat/app";
 import { parseCookies, setCookie, destroyCookie } from "nookies";
+import { REFRESH_TOKEN } from "src/contants/cookies";
 
 type User = firebase.User | null;
 type HandleAuthFunc = (
@@ -50,13 +51,13 @@ export const AuthProvider: FC = ({ children }) => {
 		const unsubscribe = auth.onAuthStateChanged((user) => {
 			if (user) {
 				setUser(user);
-				setCookie(null, "refreshToken", user.refreshToken);
+				setCookie(null, REFRESH_TOKEN, user.refreshToken);
 			}
 			if (!user) {
 				setUser(null);
-				const refreshToken = parseCookies()["refreshToken"];
+				const refreshToken = parseCookies()[REFRESH_TOKEN];
 				if (refreshToken) {
-					destroyCookie(null, "refreshToken");
+					destroyCookie(null, REFRESH_TOKEN);
 				}
 			}
 			setHasUserLoaded(true);
