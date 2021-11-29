@@ -16,11 +16,13 @@ model Test {
 }
 
 model User {
-  id    String @id @default(cuid())
-  email String @unique
-  uid   String @unique
-  role  String
-  todos Todo[]
+  id               String   @id @default(cuid())
+  email            String   @unique
+  uid              String   @unique
+  role             String
+  isAdminConfirmed Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  todos            Todo[]
 }
 
 model Todo {
