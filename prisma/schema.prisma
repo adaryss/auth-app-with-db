@@ -11,6 +11,24 @@ datasource db {
 }
 
 model Test {
-  id String @id @default(cuid())
+  id      String @id @default(cuid())
   content String
+}
+
+model User {
+  id    String @id @default(cuid())
+  email String @unique
+  uid   String @unique
+  role  String
+  todos Todo[]
+}
+
+model Todo {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  content   String
+  date      DateTime @default(now())
+  userId    String
+  userEmail String
+  priority  String
 }
