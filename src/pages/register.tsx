@@ -12,12 +12,39 @@ import {
 	AlertIcon,
 	AlertTitle,
 	Link as ChakraLink,
+	Checkbox,
 } from "@chakra-ui/react";
 import { useRef } from "react";
 import { useAuth } from "src/contexts/AuthContext";
 import { useRouter } from "next/router";
 import firebase from "firebase/compat/app";
 import Link from "next/link";
+import { UserRole } from "src/contants/user";
+import { parseCookies } from "nookies";
+import { USER_ID_TOKEN } from "src/contants/cookies";
+import { GetServerSidePropsContext } from "next";
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+	const userIdToken = parseCookies(ctx)[USER_ID_TOKEN];
+
+	if (userIdToken) {
+		return {
+			redirect: {
+				permanent: false,
+				destination: "/",
+			  },
+			props: {
+				data: null,
+			},
+		};
+	}
+
+	return {
+		props: {
+			data: null,
+		},
+	};
+};
 
 const Register = () => {
 	const [registerError, setRegisterError] = useState<string | null>(null);
@@ -27,6 +54,7 @@ const Register = () => {
 	const passwordRef = useRef() as React.MutableRefObject<HTMLInputElement>;
 	const passwordConfirmRef =
 		useRef() as React.MutableRefObject<HTMLInputElement>;
+	const [admin, setAdmin] = useState(false);
 	const { handleRegister: handleRegisterUser } = useAuth();
 	const router = useRouter();
 
@@ -43,7 +71,8 @@ const Register = () => {
 			setRegistering(true);
 			await handleRegisterUser(
 				emailRef.current.value,
-				passwordRef.current.value
+				passwordRef.current.value,
+				admin ? UserRole.ADMIN : UserRole.USER,
 			);
 			router.push("/");
 		} catch (error) {
@@ -102,6 +131,9 @@ const Register = () => {
 										placeholder="••••••"
 										isRequired
 									/>
+								</FormControl>
+								<FormControl mt={6}>
+									<Checkbox isChecked={admin} onChange={() => setAdmin((prev: boolean) => !prev)}>Ask for admin rights</Checkbox>
 								</FormControl>
 								<Button
 									type="submit"
