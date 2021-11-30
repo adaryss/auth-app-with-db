@@ -1,3 +1,4 @@
+import ApiPrivateHandler from "ApiPrivateHandler";
 import prismaClient from "db/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { parseCookies } from "nookies";
@@ -35,4 +36,4 @@ const user = async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 };
 
-export default user;
+export default ApiPrivateHandler(user);
