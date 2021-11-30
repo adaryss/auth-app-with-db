@@ -1,4 +1,4 @@
-import { auth } from "src/utils/auth/firebaseClient";
+import { auth } from "src/utils/auth/firebaseAuth";
 import firebase from "firebase/compat/app";
 
 type HandleAuthFunc = (

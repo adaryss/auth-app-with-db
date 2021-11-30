@@ -5,10 +5,14 @@ import React, {
 	useState,
 	useEffect,
 } from "react";
-import { auth } from "src/utils/auth/firebaseClient";
+import { auth } from "src/utils/auth/firebaseAuth";
 import firebase from "firebase/compat/app";
 import { parseCookies, setCookie, destroyCookie } from "nookies";
-import { AUTH_USER_ID, REFRESH_TOKEN } from "src/contants/cookies";
+import {
+	AUTH_USER_ID,
+	REFRESH_TOKEN,
+	USER_ID_TOKEN,
+} from "src/contants/cookies";
 import { createUser } from "src/utils/api/createUser";
 import {
 	authLogin,
@@ -18,13 +22,13 @@ import {
 } from "src/utils/auth/authMethods";
 import { useGetCurrentUserData } from "src/hooks/useGetCurrentUserData";
 import { UserRole } from "src/contants/user";
-import {User as UserData} from '@prisma/client'
+import { User as UserData } from "@prisma/client";
 
 type User = firebase.User | null;
 type HandleAuthFunc = (
 	email: string,
 	password: string,
-	role: UserRole,
+	role?: UserRole
 ) => Promise<any>;
 type LogoutFunc = () => Promise<void>;
 type ResetPasswordFunc = (email: string) => Promise<void>;
@@ -36,9 +40,9 @@ interface AuthContextI {
 	readonly handleLogout: LogoutFunc;
 	readonly handleResetPassword: ResetPasswordFunc;
 	readonly userData: {
-		data?: UserData | null | {},
-		error?: any,
-		isLoading: boolean,
+		data?: UserData | null | {};
+		error?: any;
+		isLoading: boolean;
 	};
 }
 
@@ -79,13 +83,14 @@ export const AuthProvider: FC = ({ children }) => {
 			throw e;
 		}
 	};
-
 	useEffect(() => {
-		const unsubscribe = auth.onAuthStateChanged((user) => {
+		return auth.onAuthStateChanged((user) => {
 			if (user) {
 				setUser(user);
-				setCookie(null, REFRESH_TOKEN, user.refreshToken);
-				setCookie(null, AUTH_USER_ID, user.uid);
+				setCookie(null, REFRESH_TOKEN, user.refreshToken, {
+					Location: "/",
+				});
+				setCookie(null, AUTH_USER_ID, user.uid, { Location: "/" });
 			}
 			if (!user) {
 				setUser(null);
@@ -101,8 +106,35 @@ export const AuthProvider: FC = ({ children }) => {
 
 			setHasUserLoaded(true);
 		});
+	}, []);
 
-		return unsubscribe;
+	useEffect(() => {
+		return auth.onIdTokenChanged(async (user) => {
+			if (user) {
+				setUser(user);
+				const userId = await user.getIdToken();
+				setCookie(null, USER_ID_TOKEN, userId, { Location: "/" });
+			}
+			if (!user) {
+				setUser(null);
+				const userIdToken = parseCookies()[USER_ID_TOKEN];
+
+				if (userIdToken) {
+					destroyCookie(null, USER_ID_TOKEN);
+				}
+			}
+		})
+	})
+
+	useEffect(() => {
+		const handle = setInterval(async () => {
+			const user = auth.currentUser;
+			if (user) {
+				await user.getIdToken(true);
+			}
+		}, 10 * 60 * 1000 * 6); // 1 hour
+
+		return () => clearInterval(handle);
 	}, []);
 
 	const userData = useGetCurrentUserData(user?.uid);
