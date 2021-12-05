@@ -62,6 +62,7 @@ const TodosList: FC<TodosListProps> = ({ todos, setTodos }) => {
 			setTodos(myTodos);
 		}
 	};
+
 	return (
 		<Flex width="60%" align="center" justifyContent="center" mt="8">
 			<Box width="full" p={2}>
@@ -103,7 +104,7 @@ const TodosList: FC<TodosListProps> = ({ todos, setTodos }) => {
 										<div>
 											{format(
 												new Date(todo.date),
-												"dd.MM. yyyy hh:mm"
+												"H:m MM/dd/yy"
 											)}
 										</div>
 									</Box>
