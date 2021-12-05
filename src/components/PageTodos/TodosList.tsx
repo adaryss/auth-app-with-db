@@ -3,46 +3,41 @@ import {
 	Box,
 	Flex,
 	Heading,
-	Alert,
-	AlertIcon,
+	Tabs,
+	TabList,
+	TabPanels,
+	Tab,
+	TabPanel,
 	Tag,
-	TagLeftIcon,
 	TagLabel,
-	PopoverTrigger,
-	PopoverContent,
-	PopoverArrow,
-	PopoverCloseButton,
-	PopoverHeader,
-	PopoverBody,
-	Popover,
-	Button,
 } from "@chakra-ui/react";
-import { DeleteIcon, CheckIcon } from "@chakra-ui/icons";
 
-import { Priority, Todo } from "src/pages/todos";
-import { format } from "date-fns";
+import { Priority, Todo as TodoType } from "src/pages/todos";
+import { Todo } from "./Todo";
 
-const getAlertStatus = (priority: Priority, done: boolean) => {
-	if (done) {
-		return "success";
-	}
+const getTodosByPriority = (todos: TodoType[], priority: Priority) => {
+	const priorityTodos = todos.filter((todo) => todo.priority === priority);
 
-	switch (priority) {
-		case Priority.LOW:
-			return "info";
-		case Priority.HIGH:
-			return "error";
-		default:
-			return "warning";
-	}
+	return priorityTodos;
+};
+
+const getDoneTodos = (todos: TodoType[]) => {
+	const doneTodos = todos.filter((todo) => todo.done === true);
+	return doneTodos;
 };
 
 interface TodosListProps {
-	readonly todos: Todo[];
-	readonly setTodos: Dispatch<Todo[]>;
+	readonly todos: TodoType[];
+	readonly setTodos: Dispatch<TodoType[]>;
 }
 
 const TodosList: FC<TodosListProps> = ({ todos, setTodos }) => {
+	const hasAnyTodos = todos.length > 0;
+	const highPrioTodos = getTodosByPriority(todos, Priority.HIGH);
+	const mediumPrioTodos = getTodosByPriority(todos, Priority.MEDIUM);
+	const lowPrioTodos = getTodosByPriority(todos, Priority.LOW);
+	const doneTodos = getDoneTodos(todos);
+
 	const handleDeleteTodo = (id: string) => {
 		const myTodos = [...todos];
 		const filteredTodos = myTodos.filter((i) => i.id !== id);
@@ -53,7 +48,7 @@ const TodosList: FC<TodosListProps> = ({ todos, setTodos }) => {
 	const handleDoneTodo = (id: string) => {
 		const myTodos = [...todos];
 		const doneTodo = myTodos.find((i) => i.id === id);
-		console.log("doneTodo", doneTodo);
+
 		if (doneTodo) {
 			const doneTodoIndex = myTodos.indexOf(doneTodo);
 
@@ -68,153 +63,129 @@ const TodosList: FC<TodosListProps> = ({ todos, setTodos }) => {
 			<Box width="full" p={2}>
 				<Box textAlign="center">
 					<Heading>
-						{todos.length > 0 ? "Your Todos" : "Todos are empty"}
+						{hasAnyTodos ? "Your Todos" : "Todos are empty"}
 					</Heading>
 				</Box>
-				{todos.map((todo) => (
-					<Alert
-						key={todo.id}
-						status={getAlertStatus(todo.priority, todo.done)}
-						borderRadius="8px"
-						mt="8"
-						overflow="visible"
-					>
-						<Flex width="full">
-							<AlertIcon />
-							<Box width="full">
-								<Heading as="h4" size="md" mb="2">
-									{todo.title}
-								</Heading>
-								{todo.description.length > 0 && (
-									<div>{todo.description}</div>
-								)}
-								<Flex
-									width="full"
-									justifyContent="space-between"
-									mt="2"
+				{hasAnyTodos && (
+					<Tabs variant="soft-rounded" colorScheme="green" mt="6">
+						<TabList justifyContent="center">
+							<Tab>
+								All{" "}
+								<Tag
+									size="sm"
+									variant="solid"
+									borderRadius="full"
+									background="rgba(0,0,0,0.1)"
+									color="inherit"
+									ml="2"
 								>
-									<Box
-										style={{ textTransform: "capitalize" }}
-									>
-										Priority:{" "}
-										<strong>{todo.priority}</strong>
-									</Box>
-
-									<Box>
-										<div>
-											{format(
-												new Date(todo.date),
-												"H:m MM/dd/yy"
-											)}
-										</div>
-									</Box>
-									<Box>
-										{!todo.done && (
-											<Popover>
-												<PopoverTrigger>
-													<Tag
-														size="md"
-														variant="solid"
-														borderRadius="full"
-														cursor="pointer"
-														overflow="visible"
-														mr="2"
-													>
-														<TagLeftIcon
-															boxSize="12px"
-															as={CheckIcon}
-														/>
-														<TagLabel>
-															Done
-														</TagLabel>
-													</Tag>
-												</PopoverTrigger>
-												<PopoverContent>
-													<PopoverArrow />
-													<PopoverCloseButton />
-													<PopoverHeader>
-														Confirmation
-													</PopoverHeader>
-													<PopoverBody
-														display="flex"
-														alignItems="center"
-														justifyContent="center"
-														flexDirection="column"
-													>
-														<Box>
-															Are you sure you
-															want to mark this
-															todo as done?
-														</Box>
-														<Button
-															type="button"
-															mt="4"
-															colorScheme="green"
-															onClick={() =>
-																handleDoneTodo(
-																	todo.id
-																)
-															}
-														>
-															Done
-														</Button>
-													</PopoverBody>
-												</PopoverContent>
-											</Popover>
-										)}
-										<Popover>
-											<PopoverTrigger>
-												<Tag
-													size="md"
-													variant="solid"
-													borderRadius="full"
-													cursor="pointer"
-													overflow="visible"
-												>
-													<TagLeftIcon
-														boxSize="12px"
-														as={DeleteIcon}
-													/>
-													<TagLabel>Delete</TagLabel>
-												</Tag>
-											</PopoverTrigger>
-											<PopoverContent>
-												<PopoverArrow />
-												<PopoverCloseButton />
-												<PopoverHeader>
-													Confirmation
-												</PopoverHeader>
-												<PopoverBody
-													display="flex"
-													alignItems="center"
-													jsutifyContent="center"
-													flexDirection="column"
-												>
-													<Box>
-														Are you sure you want to
-														delete this todo?
-													</Box>
-													<Button
-														type="button"
-														mt="4"
-														colorScheme="red"
-														onClick={() =>
-															handleDeleteTodo(
-																todo.id
-															)
-														}
-													>
-														Delete
-													</Button>
-												</PopoverBody>
-											</PopoverContent>
-										</Popover>
-									</Box>
-								</Flex>
-							</Box>
-						</Flex>
-					</Alert>
-				))}
+									<TagLabel>{todos.length}</TagLabel>
+								</Tag>
+							</Tab>
+							<Tab>
+								High{" "}
+								<Tag
+									size="sm"
+									variant="solid"
+									borderRadius="full"
+									background="rgba(0,0,0,0.1)"
+									color="inherit"
+									ml="2"
+								>
+									<TagLabel>{highPrioTodos.length}</TagLabel>
+								</Tag>
+							</Tab>
+							<Tab>
+								Medium{" "}
+								<Tag
+									size="sm"
+									variant="solid"
+									borderRadius="full"
+									background="rgba(0,0,0,0.1)"
+									color="inherit"
+									ml="2"
+								>
+									<TagLabel>
+										{mediumPrioTodos.length}
+									</TagLabel>
+								</Tag>
+							</Tab>
+							<Tab>
+								Low{" "}
+								<Tag
+									size="sm"
+									variant="solid"
+									borderRadius="full"
+									background="rgba(0,0,0,0.1)"
+									color="inherit"
+									ml="2"
+								>
+									<TagLabel>{lowPrioTodos.length}</TagLabel>
+								</Tag>
+							</Tab>
+							<Tab>
+								Done{" "}
+								<Tag
+									size="sm"
+									variant="solid"
+									borderRadius="full"
+									background="rgba(0,0,0,0.1)"
+									color="inherit"
+									ml="2"
+								>
+									<TagLabel>{doneTodos.length}</TagLabel>
+								</Tag>
+							</Tab>
+						</TabList>
+						<TabPanels>
+							<TabPanel>
+								{todos.map((todo) => (
+									<Todo
+										todo={todo}
+										handleDeleteTodo={handleDeleteTodo}
+										handleDoneTodo={handleDoneTodo}
+									/>
+								))}
+							</TabPanel>
+							<TabPanel>
+								{highPrioTodos.map((todo) => (
+									<Todo
+										todo={todo}
+										handleDeleteTodo={handleDeleteTodo}
+										handleDoneTodo={handleDoneTodo}
+									/>
+								))}
+							</TabPanel>
+							<TabPanel>
+								{mediumPrioTodos.map((todo) => (
+									<Todo
+										todo={todo}
+										handleDeleteTodo={handleDeleteTodo}
+										handleDoneTodo={handleDoneTodo}
+									/>
+								))}
+							</TabPanel>
+							<TabPanel>
+								{lowPrioTodos.map((todo) => (
+									<Todo
+										todo={todo}
+										handleDeleteTodo={handleDeleteTodo}
+										handleDoneTodo={handleDoneTodo}
+									/>
+								))}
+							</TabPanel>
+							<TabPanel>
+								{doneTodos.map((todo) => (
+									<Todo
+										todo={todo}
+										handleDeleteTodo={handleDeleteTodo}
+										handleDoneTodo={handleDoneTodo}
+									/>
+								))}
+							</TabPanel>
+						</TabPanels>
+					</Tabs>
+				)}
 			</Box>
 		</Flex>
 	);
