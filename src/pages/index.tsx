@@ -1,22 +1,9 @@
 import Layout from "src/components/Layout";
-import Link from "next/link";
-import styled from "styled-components";
+import NextLink from "next/link";
 import { useAuth } from "src/contexts/AuthContext";
 import prismaClient from "db/client";
 import { FC } from "toasted-notes/node_modules/@types/react";
-
-const TextWrapper = styled.div`
-	text-align: center;
-`;
-
-const StyledLink = styled.a`
-	color: blue;
-	text-transform: uppercase;
-
-	&:hover {
-		color: lightblue;
-	}
-`;
+import { Heading, Text, Link, Box } from "@chakra-ui/react";
 
 export const getServerSideProps = async () => {
 	try {
@@ -25,20 +12,20 @@ export const getServerSideProps = async () => {
 		return {
 			props: {
 				testData,
-			}
-		}
+			},
+		};
 	} catch (err) {
 		if (err instanceof Error) {
-			throw Error(`Something went wrong! ${err.message}`)
+			throw Error(`Something went wrong! ${err.message}`);
 		}
 	}
 
 	return {
 		props: {
 			testData: null,
-		}
-	}
-}
+		},
+	};
+};
 
 interface HomeProps {
 	readonly testData: any[];
@@ -50,37 +37,40 @@ const Home: FC<HomeProps> = ({ testData }) => {
 	return (
 		<Layout>
 			{user ? (
-				<TextWrapper>
-					Your todo app.
-					<br />
-					You can start adding your todos{' '}
-					<Link href="/todos">
-						<StyledLink>here</StyledLink>
-					</Link>
-					.
-				</TextWrapper>
+				<Box textAlign="center">
+					<Heading mb="4">Your todo app</Heading>
+					<Text fontSize="lg">
+						You can start adding your todos{" "}
+						<NextLink href="/todos">
+							<Link color="teal.500">here</Link>
+						</NextLink>
+						.
+					</Text>
+				</Box>
 			) : (
-				<TextWrapper>
-					Your todo app.
-					<br />
-					For start saving todos, please
-					<br />
-					<Link href="/login">
-						<StyledLink>Log in</StyledLink>
-					</Link>{" "}
-					or{" "}
-					<Link href="/register">
-						<StyledLink>register</StyledLink>
-					</Link>
-					.
-				</TextWrapper>
+				<Box textAlign="center">
+					<Heading mb="4">Your todo app</Heading>
+					<Text fontSize="lg">
+						{" "}
+						For start saving todos, please{" "}
+						<NextLink href="/login">
+							<Link color="teal.500" href="#">
+								LOGIN
+							</Link>
+						</NextLink>{" "}
+						or{" "}
+						<NextLink href="/register">
+							<Link color="teal.500">REGISTER</Link>
+						</NextLink>
+						.
+					</Text>
+				</Box>
 			)}
 			<div>
-				TEST DATA: 
-				{testData.map(i => (
+				TEST DATA:
+				{testData.map((i) => (
 					<div>
-						id: {i.id}{' '}
-						content: {i.content}
+						id: {i.id} content: {i.content}
 					</div>
 				))}
 			</div>
