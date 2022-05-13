@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import Layout from "src/components/Layout";
 import { parseCookies } from "nookies";
 import { firebaseAdmin } from "firebaseAdmin";
@@ -9,20 +9,14 @@ import { v4 as uuidv4 } from 'uuid';
 import {
 	Box,
 	Flex,
-	FormControl,
-	FormLabel,
-	Input,
 	Button,
-	Textarea,
-	Radio,
-	RadioGroup,
-	Stack,
 	HStack,
 	Tag,
 	TagLabel,
 	TagCloseButton,
 } from "@chakra-ui/react";
 import TodosList from "src/components/PageTodos/TodosList";
+import { TodosForm } from "src/components/PageTodos/TodosForm";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const userIdToken = parseCookies(ctx)[USER_ID_TOKEN];
@@ -30,7 +24,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
 	if (userIdToken && userId) {
 		try {
-			const currentUser = await firebaseAdmin
+			await firebaseAdmin
 				.auth()
 				.verifyIdToken(userIdToken);
 
@@ -88,7 +82,7 @@ const Todos = () => {
 
 	const [todos, setTodos] = useState<Todo[]>([]);
 
-	const handleAddTodo = (e: React.FormEvent<Element>) => {
+	const handleAddTodo = useCallback((e: React.FormEvent<Element>) => {
 		e.preventDefault();
 
 		const newTodo: Todo = {
@@ -102,25 +96,23 @@ const Todos = () => {
 
 		setTodos([newTodo, ...todos]);
 		handleClearForm();
-	};
+	}, [todoRef.current, todoDetailRef.current, prio, todos]);
 
-	const handleClearForm = () => {
+	const handleClearForm = useCallback(() => {
 		todoRef.current.value = "";
 		handleClearDetail();
 		setPrio(Priority.MEDIUM);
-	};
+	}, []);
 
-	const handleClearDetail = () => {
+	const handleClearDetail = useCallback(() => {
 		todoDetailRef.current.value = "";
 		setMoreInfo(false);
-	};
+	}, []);
 
-	const handleHideForm = () => {
+	const handleHideForm = useCallback(() => {
 		setShowTodoForm(false);
 		handleClearForm();
-	};
-
-	console.log("todos", todos);
+	}, []);
 
 	return (
 		<Layout>
@@ -135,102 +127,16 @@ const Todos = () => {
 					p={2}
 					display={showTodoForm ? "block" : "none"}
 				>
-					<form onSubmit={handleAddTodo}>
-						<Box my={4} textAlign="left">
-							<FormControl as="fieldset">
-								<FormControl>
-									<Input
-										ref={todoRef}
-										type="text"
-										placeholder="New todo?"
-										isRequired
-									/>
-								</FormControl>
-								<Box
-									mt="4"
-									display={hasMoreInfo ? "block" : "none"}
-								>
-									<FormControl>
-										<Textarea
-											minHeight="215"
-											ref={todoDetailRef}
-										/>
-									</FormControl>
-								</Box>
-								{hasMoreInfo ? (
-									<Box mt="4">
-										<HStack
-											cursor="pointer"
-											mt="2"
-											spacing={4}
-											justify="center"
-											onClick={handleClearDetail}
-										>
-											<Tag
-												size="md"
-												borderRadius="full"
-												variant="solid"
-											>
-												<TagLabel>Clear</TagLabel>
-												<TagCloseButton />
-											</Tag>
-										</HStack>
-									</Box>
-								) : (
-									<HStack
-										cursor="pointer"
-										mt="2"
-										spacing={4}
-										justify="center"
-										onClick={() => setMoreInfo(true)}
-									>
-										<Tag
-											size="md"
-											variant="solid"
-											borderRadius="full"
-											colorScheme="cyan"
-										>
-											<TagCloseButton
-												transform="rotate(45deg)"
-												m="0"
-												mr="4px"
-											/>
-											<TagLabel>Add detail Info</TagLabel>
-										</Tag>
-									</HStack>
-								)}
-								<Box mt={4}>
-									<FormLabel>Priority</FormLabel>
-									<RadioGroup
-										onChange={(val: Priority) =>
-											setPrio(val)
-										}
-										value={prio}
-									>
-										<Stack direction="row">
-											<Radio value={Priority.LOW}>
-												Low
-											</Radio>
-											<Radio value={Priority.MEDIUM}>
-												Mid
-											</Radio>
-											<Radio value={Priority.HIGH}>
-												High
-											</Radio>
-										</Stack>
-									</RadioGroup>
-								</Box>
-								<Button
-									type="submit"
-									width="full"
-									mt={8}
-									//isDisabled={}
-								>
-									Add
-								</Button>
-							</FormControl>
-						</Box>
-					</form>
+				<TodosForm
+					handleAddTodo={handleAddTodo}
+					todoRef={todoRef}
+					hasMoreInfo={hasMoreInfo}
+					todoDetailRef={todoDetailRef}
+					handleClearDetail={handleClearDetail}
+					setMoreInfo={setMoreInfo}
+					prio={prio}
+					setPrio={setPrio}
+				/>
 				</Box>
 				{showTodoForm ? (
 					<HStack
