@@ -40,7 +40,9 @@ interface AuthContextI {
 	readonly handleLogout: LogoutFunc;
 	readonly handleResetPassword: ResetPasswordFunc;
 	readonly userData: {
-		data?: UserData | null | {};
+		data?: {
+			user: UserData;
+		};
 		error?: any;
 		isLoading: boolean;
 	};
@@ -123,16 +125,17 @@ export const AuthProvider: FC = ({ children }) => {
 					destroyCookie(null, USER_ID_TOKEN);
 				}
 			}
-		})
-	})
+		});
+	});
 
+	const ONE_HOUR = 10 * 60 * 1000 * 6;
 	useEffect(() => {
 		const handle = setInterval(async () => {
 			const user = auth.currentUser;
 			if (user) {
 				await user.getIdToken(true);
 			}
-		}, 10 * 60 * 1000 * 6); // 1 hour
+		}, ONE_HOUR);
 
 		return () => clearInterval(handle);
 	}, []);
