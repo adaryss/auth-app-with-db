@@ -14,26 +14,28 @@ const user = async (req: NextApiRequest, res: NextApiResponse) => {
 					},
 				});
 
-				res.status(200).json({ user });
+				return res.status(200).json({ user });
 			} catch (err) {
-				res.status(400).json({ err });
+				return res.status(400).json({ err });
 			}
 		} else {
-			res.status(201).json({ message: 'Not logged in!' });
+			return res.status(201).json({ message: "Not logged in!" });
 		}
 	}
 
 	if (req.method === "POST") {
-		try { 
+		try {
 			await prismaClient.user.create({
 				data: JSON.parse(req.body),
 			});
 
-			res.status(200).json({ message: "Success" });
+			return res.status(200).json({ message: "Success" });
 		} catch (err) {
-			res.status(400).json({ err });
+			return res.status(400).json({ err });
 		}
 	}
+
+	return res.status(405).json({ messages: "Method not allowed" });
 };
 
 export default ApiPrivateHandler(user);
