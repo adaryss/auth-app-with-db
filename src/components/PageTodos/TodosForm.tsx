@@ -22,6 +22,7 @@ interface TodosFormProps {
 	readonly setMoreInfo: React.Dispatch<React.SetStateAction<boolean>>;
 	readonly prio: Priority;
 	readonly setPrio: React.Dispatch<React.SetStateAction<Priority>>;
+	readonly todosLoading: boolean;
 }
 
 export const TodosForm: FC<TodosFormProps> = ({
@@ -33,6 +34,7 @@ export const TodosForm: FC<TodosFormProps> = ({
 	setMoreInfo,
 	prio,
 	setPrio,
+	todosLoading,
 }) => {
 	return (
 		<form onSubmit={handleAddTodo}>
@@ -69,7 +71,7 @@ export const TodosForm: FC<TodosFormProps> = ({
 							</Stack>
 						</RadioGroup>
 					</Box>
-					<Button type="submit" width="full" mt={8}>
+					<Button type="submit" width="full" mt={8} disabled={todosLoading}>
 						Add
 					</Button>
 				</FormControl>

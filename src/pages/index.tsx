@@ -1,37 +1,10 @@
 import Layout from "src/components/Layout";
 import NextLink from "next/link";
 import { useAuth } from "src/contexts/AuthContext";
-import prismaClient from "db/client";
 import { FC } from "toasted-notes/node_modules/@types/react";
 import { Heading, Text, Link, Box } from "@chakra-ui/react";
 
-export const getServerSideProps = async () => {
-	try {
-		const testData = await prismaClient.test.findMany();
-
-		return {
-			props: {
-				testData,
-			},
-		};
-	} catch (err) {
-		if (err instanceof Error) {
-			throw Error(`Something went wrong! ${err.message}`);
-		}
-	}
-
-	return {
-		props: {
-			testData: null,
-		},
-	};
-};
-
-interface HomeProps {
-	readonly testData: any[];
-}
-
-const Home: FC<HomeProps> = ({ testData }) => {
+const Home: FC = () => {
 	const { user } = useAuth();
 
 	return (
@@ -66,14 +39,6 @@ const Home: FC<HomeProps> = ({ testData }) => {
 					</Text>
 				</Box>
 			)}
-			<div>
-				TEST DATA:
-				{testData.map((i) => (
-					<div>
-						id: {i.id} content: {i.content}
-					</div>
-				))}
-			</div>
 		</Layout>
 	);
 };
