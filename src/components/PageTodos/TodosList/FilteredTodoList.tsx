@@ -1,6 +1,6 @@
 import React, { FC, useCallback } from "react";
 import { TabPanels, TabPanel, useToast } from "@chakra-ui/react";
-import { Todo } from "../Todo/Todo";
+import { Todo } from "../../shared/Todo";
 import { useUpdateTodoStatus } from "src/hooks/useUpdateTodoStatus";
 import { useDeleteTodo } from "src/hooks/useDeleteTodo";
 import { Todo as TodoType } from "src/pages/todos";

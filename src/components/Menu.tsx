@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { useAuth } from "src/contexts/AuthContext";
+import { UserRole } from "src/contants/user";
 
 const NavigationWrapper = styled.nav`
 	background: #edf2f7;
@@ -35,11 +36,11 @@ const User = styled.div`
 
 const Menu = () => {
 	const router = useRouter();
-	const { user, handleLogout: handleLogoutUser } = useAuth();
+	const { user, handleLogout: handleLogoutUser, userData } = useAuth();
 
 	const isHome = router.pathname === "/";
 
-	const isAdmin = true;
+	const isAdmin = userData.data?.user?.role === UserRole.ADMIN && userData.data?.user?.isAdminConfirmed;
 	const isLoggedIn = user != null;
 	const isLoggedOut = user == null;
 
