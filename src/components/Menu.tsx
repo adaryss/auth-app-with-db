@@ -40,7 +40,10 @@ const Menu = () => {
 
 	const isHome = router.pathname === "/";
 
-	const isAdmin = userData.data?.user?.role === UserRole.ADMIN && userData.data?.user?.isAdminConfirmed;
+	const isAdmin =
+		userData.data?.user?.role === UserRole.ADMIN &&
+		userData.data?.user?.isAdminConfirmed;
+	const isSuperAdmin = userData.data?.user?.role === UserRole.SUPERADMIN;
 	const isLoggedIn = user != null;
 	const isLoggedOut = user == null;
 
@@ -84,16 +87,22 @@ const Menu = () => {
 						</MenuItem>
 					</>
 				)}
-				{isAdmin && isLoggedIn && (
+				{(isAdmin || isSuperAdmin) && (
 					<MenuItem>
 						<Link href="/overview">
 							<a>Overview</a>
 						</Link>
 					</MenuItem>
 				)}
-				{isLoggedIn && (
-					<User>{user.email}</User>
+				{isSuperAdmin && (
+					<MenuItem>
+						<Link href="/confirm-admin">
+							<a>Confirm Admin</a>
+						</Link>
+					</MenuItem>
 				)}
+
+				{isLoggedIn && <User>{user.email}</User>}
 
 				{isLoggedIn && (
 					<MenuItem onClick={handleLogout}>Logout</MenuItem>

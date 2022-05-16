@@ -24,7 +24,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 				},
 			});
 
-			if (user?.role === UserRole.ADMIN && user?.isAdminConfirmed) {
+			if (
+				(user?.role === UserRole.ADMIN ||
+					user?.role === UserRole.SUPERADMIN) &&
+				user?.isAdminConfirmed
+			) {
 				const allTodos = await prismaClient.todo.findMany({
 					include: {
 						user: true,
@@ -102,7 +106,7 @@ const Overview: FC<OverviewProps> = ({ data }) => {
 	return (
 		<Layout>
 			<Heading>User todos</Heading>
-			{data && <TodosOverview userTodos={data} />}
+			{data && <TodosOverview userTodos={data} />}
 		</Layout>
 	);
 };
