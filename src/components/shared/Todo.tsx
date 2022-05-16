@@ -3,8 +3,8 @@ import { Box, Flex, Heading, Alert, AlertIcon } from "@chakra-ui/react";
 
 import { Priority, Todo as TodoType } from "src/pages/todos";
 import { format } from "date-fns";
-import { UpdateTodoStateButton } from "./UpdateTodoStateButton";
-import { DeleteTodoButton } from "./DeleteTodoButton";
+import { UpdateTodoStateButton } from "../PageTodos/Todo/UpdateTodoStateButton";
+import { DeleteTodoButton } from "../PageTodos/Todo/DeleteTodoButton";
 
 const getAlertStatus = (priority: Priority, done: boolean) => {
 	if (done) {
@@ -23,19 +23,24 @@ const getAlertStatus = (priority: Priority, done: boolean) => {
 
 interface TodoProps {
 	readonly todo: TodoType;
-	readonly handleDeleteTodo: (id: string) => void;
-	readonly handleDoneTodo: (id: string) => void;
-	readonly todoStateLoading: boolean;
-	readonly todoDeleteLoading: boolean;
+	readonly handleDeleteTodo?: (id: string) => void;
+	readonly handleDoneTodo?: (id: string) => void;
+	readonly todoStateLoading?: boolean;
+	readonly todoDeleteLoading?: boolean;
+	readonly enableEdits?: boolean;
 }
 
 export const Todo: FC<TodoProps> = ({
 	todo,
 	handleDeleteTodo,
 	handleDoneTodo,
-	todoStateLoading,
-	todoDeleteLoading,
+	todoStateLoading = false,
+	todoDeleteLoading = false,
+	enableEdits = true,
 }) => {
+	const showEditingButtons =
+		enableEdits && handleDeleteTodo && handleDoneTodo;
+
 	return (
 		<Alert
 			key={todo.id}
@@ -63,20 +68,22 @@ export const Todo: FC<TodoProps> = ({
 								{format(new Date(todo.date), "H:m MM/dd/yy")}
 							</div>
 						</Box>
-						<Box>
-							{!todo.done && (
-								<UpdateTodoStateButton
+						{showEditingButtons && (
+							<Box>
+								{!todo.done && (
+									<UpdateTodoStateButton
+										todo={todo}
+										handleDoneTodo={handleDoneTodo}
+										todoStateLoading={todoStateLoading}
+									/>
+								)}
+								<DeleteTodoButton
+									handleDeleteTodo={handleDeleteTodo}
 									todo={todo}
-									handleDoneTodo={handleDoneTodo}
-									todoStateLoading={todoStateLoading}
+									todoDeleteLoading={todoDeleteLoading}
 								/>
-							)}
-							<DeleteTodoButton
-								handleDeleteTodo={handleDeleteTodo}
-								todo={todo}
-								todoDeleteLoading={todoDeleteLoading}
-							/>
-						</Box>
+							</Box>
+						)}
 					</Flex>
 				</Box>
 			</Flex>
