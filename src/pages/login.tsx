@@ -23,7 +23,6 @@ import { GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
 import { USER_ID_TOKEN } from "src/contants/cookies";
 
-
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const userIdToken = parseCookies(ctx)[USER_ID_TOKEN];
 
@@ -32,7 +31,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 			redirect: {
 				permanent: false,
 				destination: "/",
-			  },
+			},
 			props: {
 				data: null,
 			},
@@ -92,7 +91,7 @@ const Login = () => {
 			setResetting(true);
 			await handleResetUserPassword(emailResetRef.current.value);
 			setResetPasswordSuccess("Check your email for more information");
-			emailResetRef.current.value = '';
+			emailResetRef.current.value = "";
 		} catch (error) {
 			const authError = error as firebase.auth.Error;
 			setPasswordResetError(authError.message.split(":")[1]);
@@ -222,6 +221,13 @@ const Login = () => {
 					</Box>
 				</Flex>
 			)}
+			<Box mt={16}>
+				<Heading size="sm">Test accounts</Heading>
+				<Box mt="8">simpleuser@vgvgvg.vg / password: 123456</Box>
+				<Box mt="8">testadmin@@vgvgvg.vg / password: 123456</Box>
+				<Box mt="8">approvedtestadmin@vgvgvg.vg / password: 123456</Box>
+				<Box mt="8">testsuperadmin@@vgvgvg.vg / password: 123456</Box>
+			</Box>
 		</Layout>
 	);
 };
