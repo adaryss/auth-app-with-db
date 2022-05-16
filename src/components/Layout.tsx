@@ -1,26 +1,9 @@
 import React, { FC } from "react";
-import styled from "styled-components";
 import Head from "next/head";
 
 import Menu from "src/components/Menu";
 import Footer from "src/components/Footer";
-import { GlobalStyles } from "src/styles/GlobalStyles";
-
-const MainContainer = styled.div`
-	padding: 0 20px;
-`;
-
-const Main = styled.main`
-	max-width: 1216px;
-	margin: 0 auto;
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	flex-direction: column;
-	min-height: 90vh;
-	font-size: 16px;
-	line-height: 1.3;
-`;
+import { Box } from "@chakra-ui/react";
 
 const Layout: FC = ({ children }) => (
 	<>
@@ -52,11 +35,25 @@ const Layout: FC = ({ children }) => (
 		<header>
 			<Menu />
 		</header>
-		<MainContainer>
-			<Main>{children}</Main>
-		</MainContainer>
+		<Box p="0 20px">
+			<Box
+				as="main"
+				sx={{
+					maxWidth: "1216px",
+					margin: "0 auto",
+					display: "flex",
+					justifyContent: "flex-start",
+					alignItems: "center",
+					flexDirection: "column",
+					minHeight: "calc(100vh - 56px - 52.8px)",
+					fontSize: "16px",
+					lineHeight: "1.3",
+				}}
+			>
+				{children}
+			</Box>
+		</Box>
 		<Footer />
-		<GlobalStyles />
 	</>
 );
 

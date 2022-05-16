@@ -1,38 +1,31 @@
-import React from "react";
-import styled from "styled-components";
+import React, { FC, useCallback } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { useAuth } from "src/contexts/AuthContext";
 import { UserRole } from "src/contants/user";
+import { Box, UnorderedList, ListItem } from "@chakra-ui/react";
 
-const NavigationWrapper = styled.nav`
-	background: #edf2f7;
-	width: 100%;
-	padding: 16px 0;
-`;
-
-const Navigation = styled.ul`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`;
-
-const MenuItem = styled.li`
-	list-style: none;
-	font-size: 16px;
-	margin-right: 16px;
-	text-decoration: underline;
-	cursor: pointer;
-
-	&:hover {
-		color: red;
-	}
-`;
-
-const User = styled.div`
-	margin: 0 8px;
-`;
+const StyledListItem: FC<{handleOnClick?: () => void}> = ({ children, handleOnClick }) => (
+	<ListItem
+		sx={{
+			color: "gray.700",
+			listStyle: "none",
+			fontSize: "16px",
+			marginRight: "16px",
+			cursor: "pointer",
+			fontWeight: 600,
+			letterSpacing: '0.2px',
+		}}
+		_hover={{
+			color: "teal.500",
+			textDecoration: "underline",
+		}}
+		onClick={() => handleOnClick && handleOnClick()}
+	>
+		{children}
+	</ListItem>
+);
 
 const Menu = () => {
 	const router = useRouter();
@@ -47,7 +40,7 @@ const Menu = () => {
 	const isLoggedIn = user != null;
 	const isLoggedOut = user == null;
 
-	const handleLogout = async () => {
+	const handleLogout = useCallback(async () => {
 		try {
 			await handleLogoutUser();
 			if (!isHome) {
@@ -56,59 +49,63 @@ const Menu = () => {
 		} catch (error) {
 			console.error(error);
 		}
-	};
+	}, [isHome, handleLogoutUser, router]);
 
 	return (
-		<NavigationWrapper>
-			<Navigation>
-				<MenuItem>
+		<Box as="nav" bg="gray.200" w="100%" p="16px 0">
+			<UnorderedList
+				display="flex"
+				alignItems="center"
+				justifyContent="center"
+			>
+				<StyledListItem>
 					<Link href="/">
 						<a>Home</a>
 					</Link>
-				</MenuItem>
+				</StyledListItem>
 				{isLoggedIn && (
-					<MenuItem>
+					<StyledListItem>
 						<Link href="/todos">
 							<a>My todos</a>
 						</Link>
-					</MenuItem>
+					</StyledListItem>
 				)}
 				{isLoggedOut && (
 					<>
-						<MenuItem>
+						<StyledListItem>
 							<Link href="/login">
 								<a>Login</a>
 							</Link>
-						</MenuItem>
-						<MenuItem>
+						</StyledListItem>
+						<StyledListItem>
 							<Link href="/register">
 								<a>Register</a>
 							</Link>
-						</MenuItem>
+						</StyledListItem>
 					</>
 				)}
 				{(isAdmin || isSuperAdmin) && (
-					<MenuItem>
+					<StyledListItem>
 						<Link href="/overview">
 							<a>Overview</a>
 						</Link>
-					</MenuItem>
+					</StyledListItem>
 				)}
 				{isSuperAdmin && (
-					<MenuItem>
+					<StyledListItem>
 						<Link href="/confirm-admin">
 							<a>Confirm Admin</a>
 						</Link>
-					</MenuItem>
+					</StyledListItem>
 				)}
 
-				{isLoggedIn && <User>{user.email}</User>}
+				{isLoggedIn && <Box m="0 8px">{user.email}</Box>}
 
 				{isLoggedIn && (
-					<MenuItem onClick={handleLogout}>Logout</MenuItem>
+					<StyledListItem handleOnClick={handleLogout}>Logout</StyledListItem>
 				)}
-			</Navigation>
-		</NavigationWrapper>
+			</UnorderedList>
+		</Box>
 	);
 };
 
