@@ -1,4 +1,4 @@
-import React, { FC, Dispatch, useCallback, useMemo } from "react";
+import React, { FC, Dispatch, useMemo } from "react";
 import { Tabs } from "@chakra-ui/react";
 
 import { Priority, Todo as TodoType } from "src/pages/todos";
