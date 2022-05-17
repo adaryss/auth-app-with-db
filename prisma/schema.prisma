@@ -6,21 +6,17 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
-}
-
-model Test {
-  id      String @id @default(cuid())
-  content String
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
-  id               String   @id @default(cuid())
-  email            String   @unique
-  uid              String   @unique
+  id               String  @id @default(cuid())
+  email            String  @unique
+  uid              String  @unique
   role             String
-  isAdminConfirmed Boolean  @default(false)
+  isAdminConfirmed Boolean @default(false)
   createdAt        Int
   todos            Todo[]
 }
