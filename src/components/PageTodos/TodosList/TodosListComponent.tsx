@@ -22,7 +22,7 @@ const TodosListComponent: FC<TodosListComponentProps> = ({
 		<TodosListWrapper>
 			<Box textAlign="center">
 				<Heading>
-					{hasAnyTodos ? "Your Todos" : "Todos are empty"}
+					{hasAnyTodos ? "My Todos" : "Todos are empty"}
 				</Heading>
 			</Box>
 			{todosLoading ? (
