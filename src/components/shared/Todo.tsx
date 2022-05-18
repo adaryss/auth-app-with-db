@@ -65,7 +65,7 @@ export const Todo: FC<TodoProps> = ({
 
 						<Box>
 							<div>
-								{format(new Date(todo.date), "H:m MM/dd/yy")}
+								{format(new Date(Date.parse(todo.date)), "H:m MM/dd/yy")}
 							</div>
 						</Box>
 						{showEditingButtons && (

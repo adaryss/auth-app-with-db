@@ -17,7 +17,7 @@ model User {
   uid              String  @unique
   role             String
   isAdminConfirmed Boolean @default(false)
-  createdAt        Int
+  createdAt        String
   todos            Todo[]
 }
 
@@ -26,7 +26,7 @@ model Todo {
   user        User    @relation(fields: [userId], references: [uid])
   title       String
   description String
-  date        Int
+  date        String
   userId      String
   priority    String
   done        Boolean

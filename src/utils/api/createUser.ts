@@ -17,7 +17,7 @@ export const createUser = async ({
 	try {
 		const response = await fetch("/api/user", {
 			method: "POST",
-			body: JSON.stringify({ uid: authUid, email, role, createdAt: Date.now() }),
+			body: JSON.stringify({ uid: authUid, email, role, createdAt: new Date().toISOString() }),
 		});
 		const json = await response.json();
 
