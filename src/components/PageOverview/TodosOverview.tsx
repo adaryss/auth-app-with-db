@@ -33,7 +33,7 @@ export const TodosOverview: FC<TodosOverviewProps> = ({ userTodos }) => {
 							{todos.map((todo) => (
 								<Todo
 									key={todo.id}
-									todo={todo as TodoType}
+									todo={todo as unknown as TodoType}
 									enableEdits={false}
 								/>
 							))}
