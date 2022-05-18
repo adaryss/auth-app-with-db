@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Todo" ALTER COLUMN "date" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "createdAt" SET DATA TYPE TEXT;

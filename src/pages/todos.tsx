@@ -75,7 +75,7 @@ const ERROR_TOAST_ID = "todos-error-toast";
 
 export interface Todo {
 	readonly id?: string;
-	readonly date: number;
+	readonly date: string;
 	readonly title: string;
 	readonly description: string;
 	readonly priority: Priority;
@@ -97,9 +97,9 @@ const Todos: FC<TodosProps> = ({ todosData }) => {
 	const { userData } = useAuth();
 	const toast = useToast();
 
-	const sortedTodos = (todosData ?? []).sort((a, b) => b.date - a.date);
+	const sortedTodos = (todosData ?? []).sort((a, b) => b.date > a.date ? 1 : -1);
 	const [todos, setTodos] = useState<Todo[]>(sortedTodos ?? []);
-
+	console.log("todos", todos);
 	const handleAddTodo = useCallback(
 		async (e: React.FormEvent<Element>) => {
 			e.preventDefault();
@@ -108,7 +108,7 @@ const Todos: FC<TodosProps> = ({ todosData }) => {
 				title: todoRef.current.value,
 				description: todoDetailRef.current.value ?? "",
 				priority: prio,
-				date: Date.now(),
+				date: new Date().toISOString(),
 				done: false,
 			};
 			const userId = userData?.data?.user?.uid;
@@ -198,7 +198,8 @@ const Todos: FC<TodosProps> = ({ todosData }) => {
 				todosLoading={todosLoading}
 			/>
 
-			{todosError && !toast.isActive(ERROR_TOAST_ID) &&
+			{todosError &&
+				!toast.isActive(ERROR_TOAST_ID) &&
 				toast({
 					id: ERROR_TOAST_ID,
 					title: "Failed to add todo",

@@ -12,7 +12,7 @@ const todo = async (req: NextApiRequest, res: NextApiResponse) => {
 			date: bodyData.date,
 			done: bodyData.done,
 		};
-
+		console.log("data", data);
 		try {
 			const result = await prismaClient.todo.create({
 				data: {
@@ -20,7 +20,7 @@ const todo = async (req: NextApiRequest, res: NextApiResponse) => {
 					user: { connect: { uid: bodyData.userId } },
 				},
 			});
-
+			console.log("result", result);
 			return res.status(200).json({ message: "Success", data: result });
 		} catch (err) {
 			console.warn(err);

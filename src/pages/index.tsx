@@ -43,9 +43,9 @@ const Home: FC = () => {
 			<Box mt={16}>
 				<Heading size="sm">Test accounts</Heading>
 				<Box mt="8">simpleuser@vgvgvg.vg / password: 123456</Box>
-				<Box mt="8">testadmin@@vgvgvg.vg / password: 123456</Box>
+				<Box mt="8">testadmin@vgvgvg.vg / password: 123456</Box>
 				<Box mt="8">approvedtestadmin@vgvgvg.vg / password: 123456</Box>
-				<Box mt="8">testsuperadmin@@vgvgvg.vg / password: 123456</Box>
+				<Box mt="8">testsuperadmin@vgvgvg.vg / password: 123456</Box>
 			</Box>
 		</Layout>
 	);
