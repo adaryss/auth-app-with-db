@@ -23,6 +23,7 @@ import { UserRole } from "src/contants/user";
 import { parseCookies } from "nookies";
 import { USER_ID_TOKEN } from "src/contants/cookies";
 import { GetServerSidePropsContext } from "next";
+import { useSWRConfig } from "swr";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const userIdToken = parseCookies(ctx)[USER_ID_TOKEN];
@@ -32,7 +33,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 			redirect: {
 				permanent: false,
 				destination: "/",
-			  },
+			},
 			props: {
 				data: null,
 			},
@@ -57,6 +58,7 @@ const Register = () => {
 	const [admin, setAdmin] = useState(false);
 	const { handleRegister: handleRegisterUser } = useAuth();
 	const router = useRouter();
+	const { mutate } = useSWRConfig();
 
 	const handleRegister = async (e: React.FormEvent<Element>) => {
 		e.preventDefault();
@@ -72,8 +74,9 @@ const Register = () => {
 			await handleRegisterUser(
 				emailRef.current.value,
 				passwordRef.current.value,
-				admin ? UserRole.ADMIN : UserRole.USER,
+				admin ? UserRole.ADMIN : UserRole.USER
 			);
+			mutate("getCurrentUserData");
 			router.push("/");
 		} catch (error) {
 			const authError = error as firebase.auth.Error;
@@ -133,7 +136,14 @@ const Register = () => {
 									/>
 								</FormControl>
 								<FormControl mt={6}>
-									<Checkbox isChecked={admin} onChange={() => setAdmin((prev: boolean) => !prev)}>Ask for admin rights</Checkbox>
+									<Checkbox
+										isChecked={admin}
+										onChange={() =>
+											setAdmin((prev: boolean) => !prev)
+										}
+									>
+										Ask for admin rights
+									</Checkbox>
 								</FormControl>
 								<Button
 									type="submit"

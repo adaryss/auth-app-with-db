@@ -140,7 +140,7 @@ export const AuthProvider: FC = ({ children }) => {
 		return () => clearInterval(handle);
 	}, []);
 
-	const userData = useGetCurrentUserData(user?.uid);
+	const userData = useGetCurrentUserData();
 
 	const contextValue: AuthContextI = {
 		user,
