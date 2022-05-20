@@ -5,8 +5,12 @@ import { useRouter } from "next/dist/client/router";
 import { useAuth } from "src/contexts/AuthContext";
 import { UserRole } from "src/contants/user";
 import { Box, UnorderedList, ListItem } from "@chakra-ui/react";
+import { useSWRConfig } from "swr";
 
-const StyledListItem: FC<{handleOnClick?: () => void}> = ({ children, handleOnClick }) => (
+const StyledListItem: FC<{ handleOnClick?: () => void }> = ({
+	children,
+	handleOnClick,
+}) => (
 	<ListItem
 		sx={{
 			color: "gray.700",
@@ -15,7 +19,7 @@ const StyledListItem: FC<{handleOnClick?: () => void}> = ({ children, handleOnCl
 			marginRight: "16px",
 			cursor: "pointer",
 			fontWeight: 600,
-			letterSpacing: '0.2px',
+			letterSpacing: "0.2px",
 		}}
 		_hover={{
 			color: "teal.500",
@@ -30,6 +34,7 @@ const StyledListItem: FC<{handleOnClick?: () => void}> = ({ children, handleOnCl
 const Menu = () => {
 	const router = useRouter();
 	const { user, handleLogout: handleLogoutUser, userData } = useAuth();
+	const { mutate } = useSWRConfig();
 
 	const isHome = router.pathname === "/";
 
@@ -43,6 +48,7 @@ const Menu = () => {
 	const handleLogout = useCallback(async () => {
 		try {
 			await handleLogoutUser();
+			mutate("getCurrentUserData");
 			if (!isHome) {
 				router.push("/");
 			}
@@ -102,7 +108,9 @@ const Menu = () => {
 				{isLoggedIn && <Box m="0 8px">{user.email}</Box>}
 
 				{isLoggedIn && (
-					<StyledListItem handleOnClick={handleLogout}>Logout</StyledListItem>
+					<StyledListItem handleOnClick={handleLogout}>
+						Logout
+					</StyledListItem>
 				)}
 			</UnorderedList>
 		</Box>

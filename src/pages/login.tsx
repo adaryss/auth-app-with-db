@@ -22,6 +22,7 @@ import Link from "next/link";
 import { GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
 import { USER_ID_TOKEN } from "src/contants/cookies";
+import { useSWRConfig } from "swr";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const userIdToken = parseCookies(ctx)[USER_ID_TOKEN];
@@ -62,6 +63,7 @@ const Login = () => {
 		handleResetPassword: handleResetUserPassword,
 	} = useAuth();
 	const router = useRouter();
+	const { mutate } = useSWRConfig();
 
 	const handleLogin = async (e: React.FormEvent<Element>) => {
 		e.preventDefault();
@@ -73,6 +75,7 @@ const Login = () => {
 				emailRef.current.value,
 				passwordRef.current.value
 			);
+			mutate("getCurrentUserData");
 			router.push("/");
 		} catch (error) {
 			const authError = error as firebase.auth.Error;
